@@ -25,14 +25,19 @@
 </template>
 
 <script setup>
-import { $medicine_list, $admin } from '../store.js'
+const props = defineProps({
+  updateUserInfo: {
+    type: Function
+  }
+})
+import { $medicine_list, $name, $target_date, $target_days, $start_date, $days_on } from '../store.js'
 import { ref } from "vue";
 const medList = $medicine_list.value;
-const name = ref($admin.value.name);
-const target_date = ref($admin.value.target_date);
-const target_days = ref($admin.value.target_days);
-const start_date = ref($admin.value.start_date);
-const on_days = ref($admin.value.on_days);
+const name = ref($name.value);
+const target_date = ref($target_date.value);
+const target_days = ref($target_days.value);
+const start_date = ref($start_date.value);
+const on_days = ref($days_on.value);
 
 let picker_format = (value) => {
   let month = value.split('/')[0];
@@ -42,7 +47,6 @@ let picker_format = (value) => {
 }
 
 let date_format = (value) => {
-  console.log(value)
   let year = value.split('-')[0];
   let month = value.split('-')[1];
   let day = value.split('-')[2];
@@ -68,19 +72,21 @@ let entry_verification = (value) => {
 }
 
 let formatted_td;
-if($admin.value.target_date != null || $admin.value.target_date != undefined){
-  formatted_td = picker_format($admin.value.target_date);
+if($target_date.value != null || $target_date.value != undefined){
+  console.log('init', $target_date.value)
+  formatted_td = picker_format($target_date.value);
+  console.log('picker', formatted_td)
 }
 
 let formatted_sd;
-if($admin.value.start_date != null || $admin.value.start_date != undefined){
-  formatted_sd = picker_format($admin.value.start_date);
+if($start_date.value != null || $start_date.value != undefined){
+  formatted_sd = picker_format($start_date.value);
 }
 
 let form_name;
 
-if(entry_verification($admin.value.name)){
-  form_name = $admin.value.name;
+if(entry_verification($name.value)){
+  form_name = $name.value;
 } else {
   form_name = '';
 }
@@ -95,7 +101,7 @@ if(entry_verification(formatted_td)){
   let day = date.getDate();
   let today = `${month}/${day}/${year}`
   let td = time_between_dates(new Date(today), new Date(target_date.value));
-  $admin.set({target_days: td, ...$admin.value});
+  $target_days.set(td);
 }
 
 if(entry_verification(formatted_sd)){
@@ -106,22 +112,38 @@ if(entry_verification(formatted_sd)){
   let today = `${month}/${day}/${year}`;
   let ts = time_between_dates(new Date(start_date.value), new Date(today));
   ts = ts + 1;
-  $admin.set({on_days: ts, ...$admin.value});
+  $days_on.set(ts);
 }
 
-let days_on_meds = $admin.value.on_days;
-let num_target_days = $admin.value.target_days;
+let days_on_meds = $days_on.value;
+let num_target_days = $target_days.value;
 
 let form_submit = () => {
-  let name = form_name.trim();
-  if(entry_verification(name) && entry_verification(formatted_sd) && entry_verification(formatted_td)){
-    let reformatted_td = date_format(formatted_td);
-    console.log(reformatted_td)
-    let reformatted_sd = date_format(formatted_sd);
-    $admin.set({target_date: reformatted_td, start_date: reformatted_sd, name: name, ...$admin.value});
+
+  if(entry_verification(form_name)){
+    let name = form_name.trim();
+    $name.set(name);
   } else {
-    console.log('Invalid data');
+    //console.log('Invalid name');
   }
+
+  if(entry_verification(formatted_td)){
+    let reformatted_td = date_format(formatted_td);
+    $target_date.set(reformatted_td);
+    console.log('ref_td', reformatted_td)
+    console.log('$', $target_date.value)
+  } else {
+    console.log('Invalid target date');
+  }
+
+  if(entry_verification(formatted_sd)){
+    let reformatted_sd = date_format(formatted_sd);
+    $start_date.set(reformatted_sd);
+  } else {
+    //console.log('Invalid start date');
+  }
+
+  props.updateUserInfo();
 }
 
 </script>

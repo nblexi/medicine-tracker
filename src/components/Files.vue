@@ -1,7 +1,10 @@
 <template>
-  <div class='mt-5 bg-light'>
-    <input class='' type="file" id="fileInput" name="filename">
-    <button class='btn btn-outline-dark' @click='updateAll'>Upload</button>
+  <div class='mt-5 download'>
+    <label class="custom-file-upload" @click='edit_button_state'>
+      <input type="file" id='fileUpload' name='filename'/>
+      Select File
+    </label>
+    <button class='btn btn-outline-dark' id='upload' @click='updateAll'>Upload</button>
   </div>
   <div class='mt-4'>
     <button class='w-100 btn btn-lg btn-info' @click='downloadAll'>Download</button>
@@ -17,16 +20,28 @@ const props = defineProps({
     type: Function
   }
 })
-import { $medicine_list, $admin} from '../store.js'
+import { $medicine_list, $name, $start_date, $target_date, $target_days, $days_on} from '../store.js'
 import { ref } from "vue";
 let medList = $medicine_list.value;
-let name = $admin.value.name;
-let start_date = $admin.value.start_date;
-let target_date = $admin.value.target_date;
-let target_days = $admin.value.target_days;
+let name = $name.value;
+let start_date = $start_date.value;
+let target_date = $target_date.value;
+let target_days = $target_days.value;
+let days_on_meds = $days_on.value;
+
+console.log(name, start_date, target_date, target_days);
 
 let delete_text = ref('Clear Data');
 let del_rounds = 0;
+
+let edit_button_state = () => {
+  let upload_button = document.getElementById('upload');
+  setTimeout(() => {
+    upload_button.classList.remove('btn-outline-dark');
+    upload_button.classList.add('btn-info');
+  }, 1000);
+
+}
 
 let updateAll = () => {
   let user_name;
@@ -34,7 +49,15 @@ let updateAll = () => {
   let user_target_date;
   let user_target_days;
 
-  const fileInput = document.getElementById('fileInput');
+  if(document.getElementById('fileUpload').files.length == 0) {
+    return;
+  }
+
+  let upload_button = document.getElementById('upload');
+  upload_button.classList.add('btn-outline-dark');
+  upload_button.classList.remove('btn-info');
+
+  const fileInput = document.getElementById('fileUpload');
   const file = fileInput.files[0];
   if (file) {
     const reader = new FileReader();
@@ -50,12 +73,10 @@ let updateAll = () => {
       user_target_date = header[2];
       user_target_days = header[3];
 
-      $admin.set({
-        name: user_name,
-        start_date: user_start_date,
-        target_date: user_target_date,
-        target_days: user_target_days
-      });
+      $name.set(user_name);
+      $start_date.set(user_start_date);
+      $target_date.set(user_target_date);
+      $target_days.set(user_target_days);
 
      rows.slice(1).map((row) => {
         const values = row.split(',');
@@ -112,12 +133,11 @@ let downloadAll = () => {
 let deleteAll = () => {
   let clear_data = () => {
     $medicine_list.set([]);
-    $admin.set({
-      name: '',
-      start_date: '',
-      target_date: '',
-      target_days: ''
-    });
+    $name.set('');
+    $start_date.set('');
+    $target_date.set('');
+    $target_days.set('');
+    $days_on.set('');
     props.updateUserInfo();
   }
 
@@ -147,6 +167,24 @@ let deleteAll = () => {
 </script>
 
 <style scoped>
+input[type="file"] {
+  display: none;
+}
+.custom-file-upload {
+  border: 1px solid #565656;
+  border-radius: 8px;
+  display: inline-block;
+  padding: 6px 12px;
+  margin: 1px, 5px;
+  cursor: pointer;
+}
+.download {
+  display: flex;
+  justify-content:space-around;
+  padding: 5px;
+  border-radius: 8px;
+  background-color: rgb(207, 239, 213);
+}
 h3, h5, span {
   color: rgb(209, 209, 209);
 }

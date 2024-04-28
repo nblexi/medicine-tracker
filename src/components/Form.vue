@@ -41,9 +41,9 @@ const props = defineProps({
     type: Function
   }
 })
-import { $medicine_list, $admin } from '../store.js'
+import { $medicine_list, $target_date } from '../store.js'
 const medList = $medicine_list.value;
-const target_date = $admin.value.target_date;
+const target_date = $target_date.value;
 
 let medicine_name;
 let medicine_frequency;

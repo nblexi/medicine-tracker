@@ -1,6 +1,6 @@
 <template>
   <div class='mx-auto w-50 container'>
-    <User :key="userInfoKey" />
+    <User :key="userInfoKey" :updateUserInfo='forceRerender'/>
     <Files :updateUserInfo='forceRerender'/>
   </div>
 </template>

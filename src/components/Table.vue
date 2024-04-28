@@ -3,13 +3,13 @@
     <table class='w-100'>
       <tr>
         <th class='pt-2 px-2'>name</th>
-        <th class='pt-2 px-2'>/blister</th>
-        <th class='pt-2 px-2'>blisters</th>
-        <th class='pt-2 px-2'>loose</th>
-        <th class='pt-2 px-2'>pillbox (portion)</th>
-        <th class='pt-2 px-2'>pills</th>
-        <th class='pt-2 px-2'>days</th>
-        <th class='pt-2 px-2'>needed for target</th>
+        <th class='pt-2 px-2'>pills/blister</th>
+        <th class='pt-2 px-2'># blisters</th>
+        <th class='pt-2 px-2'># loose pills</th>
+        <th class='pt-2 px-2'># doses in pillbox</th>
+        <th class='pt-2 px-2'>total pills</th>
+        <th class='pt-2 px-2'>total days</th>
+        <th class='pt-2 px-2'>pills needed to reach target</th>
         <th class='pt-2 px-2'>pills to get</th>
         <th class='pt-2 px-2'>blisters to get</th>
         <th class='pt-2 px-2'>will run out</th>
@@ -25,7 +25,7 @@
         <td class='pt-2 px-2'>{{ Math.ceil(parseFloat(medicine.needed_for_target)) }}</td>
         <td class='pt-2 px-2'>{{ truncateToDecimals(Math.ceil(parseFloat(medicine.need_pills))) }}</td>
         <td class='pt-2 px-2'>{{ Math.ceil(parseFloat(medicine.need_blisters)) }}</td>
-        <td class='pt-2 px-2'>{{ medicine.will_run_out }}</td>
+        <td class='pt-2 px-2'>{{ prettyPrintDate(medicine.will_run_out) }}</td>
         <td class='save' :id='medicine.name' @click='save_medicine(medicine.name)'><i class="bi bi-floppy2"></i></td>
       </tr>
     </table>
@@ -33,16 +33,27 @@
 </template>
 
 <script setup>
-import { $medicine_list, $admin } from '../store.js'
+import { $medicine_list, $target_date, $target_days } from '../store.js'
 const medList = $medicine_list.value;
-const target_date = $admin.value.target_date;
-let target_days = $admin.value.target_days;
+const target_date = $target_date.value;
+const target_days = $target_days.value;
 
 const props = defineProps({
   updateTable: {
     type: Function
   }
 })
+
+let prettyPrintDate = (date) => {
+  let month = value.split('/')[0];
+  let day = value.split('/')[1];
+  let year = value.split('/')[2];
+  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+  let monthName = months[month - 1];
+
+  return `${monthName} ${day}, ${year}`;
+}
 
 function truncateToDecimals(num, dec = 2) {
   const calcDec = Math.pow(10, dec);
@@ -73,10 +84,8 @@ let save_medicine = (name) => {
     let day = date.getDate();
     let today = `${month}/${day}/${year}`
 
-    console.log(today)
-    console.log(target_date)
-    target_days = time_between_dates(new Date(today), new Date(target_date));
-    $admin.set({target_days: target_days, ...$admin.value});
+    let td = time_between_dates(new Date(today), new Date(target_date));
+    $target_date.set(target_days);
 
     let total_pills = ((blister_number * ppb) + loose_number + (pillbox_number * dose));
     let total_days = parseFloat(total_pills / (frequency * dose));
@@ -84,8 +93,11 @@ let save_medicine = (name) => {
     let need_pills = Math.ceil(needed_for_target - total_pills);
     let need_blisters = Math.ceil(need_pills / ppb);
 
-
-
+    if(isNaN(needed_for_target)) {
+      needed_for_target = 0;
+      need_pills = 0;
+      need_blisters = 0;
+    }
 
     date.setDate(date.getDate() + total_days);
     let will_run_out = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;

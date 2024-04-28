@@ -1,6 +1,12 @@
 import { atom, map } from 'nanostores';
 
-export const $admin = atom({});
+export const $admin = atom(false);
+
+export const $name = atom('');
+export const $start_date = atom('');
+export const $target_date = atom('');
+export const $target_days = atom('');
+export const $days_on = atom('');
 
 export const $medicine_list = atom([]);
 
