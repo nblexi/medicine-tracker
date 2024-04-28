@@ -110,7 +110,7 @@ let add = () => {
   let year = date.getFullYear();
   let month = (date.getMonth() + 1);
   let day = date.getDate();
-  let todays_date = `${day}/${month}/${year}`;
+  let todays_date = `${month}/${day}/${year}`;
 
   let newArray = [...medList];
 

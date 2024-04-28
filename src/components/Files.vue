@@ -29,8 +29,6 @@ let target_date = $target_date.value;
 let target_days = $target_days.value;
 let days_on_meds = $days_on.value;
 
-console.log(name, start_date, target_date, target_days);
-
 let delete_text = ref('Clear Data');
 let del_rounds = 0;
 

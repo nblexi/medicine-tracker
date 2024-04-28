@@ -47,9 +47,10 @@ const props = defineProps({
 let prettyPrintDate = (date) => {
   if(date === '') return '';
 
-  let month = value.split('/')[0];
-  let day = value.split('/')[1];
-  let year = value.split('/')[2];
+  console.log(date);
+  let month = date.split('/')[0];
+  let day = date.split('/')[1];
+  let year = date.split('/')[2];
   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
   let monthName = months[month - 1];
@@ -95,14 +96,15 @@ let save_medicine = (name) => {
     let need_pills = Math.ceil(needed_for_target - total_pills);
     let need_blisters = Math.ceil(need_pills / ppb);
 
-    if(isNaN(needed_for_target)) {
+    if(isNaN(needed_for_target) || needed_for_target == 0) {
       needed_for_target = 0;
       need_pills = 0;
       need_blisters = 0;
     }
 
     date.setDate(date.getDate() + total_days);
-    let will_run_out = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+
+    let will_run_out = `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
 
     let tempArray = [...medList];
 

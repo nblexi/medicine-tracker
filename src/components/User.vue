@@ -40,6 +40,7 @@ const start_date = ref($start_date.value);
 const on_days = ref($days_on.value);
 
 let picker_format = (value) => {
+  console.log(value)
   let month = value.split('/')[0];
   let day = value.split('/')[1];
   let year = value.split('/')[2];
@@ -72,14 +73,12 @@ let entry_verification = (value) => {
 }
 
 let formatted_td;
-if($target_date.value != null || $target_date.value != undefined){
-  console.log('init', $target_date.value)
+if(entry_verification($target_date.value)){
   formatted_td = picker_format($target_date.value);
-  console.log('picker', formatted_td)
 }
 
 let formatted_sd;
-if($start_date.value != null || $start_date.value != undefined){
+if(entry_verification($start_date.value)){
   formatted_sd = picker_format($start_date.value);
 }
 
@@ -123,24 +122,16 @@ let form_submit = () => {
   if(entry_verification(form_name)){
     let name = form_name.trim();
     $name.set(name);
-  } else {
-    //console.log('Invalid name');
   }
 
   if(entry_verification(formatted_td)){
     let reformatted_td = date_format(formatted_td);
     $target_date.set(reformatted_td);
-    console.log('ref_td', reformatted_td)
-    console.log('$', $target_date.value)
-  } else {
-    console.log('Invalid target date');
   }
 
   if(entry_verification(formatted_sd)){
     let reformatted_sd = date_format(formatted_sd);
     $start_date.set(reformatted_sd);
-  } else {
-    //console.log('Invalid start date');
   }
 
   props.updateUserInfo();
