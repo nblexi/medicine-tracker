@@ -88,7 +88,7 @@ let form_submit = () => {
     props.updateForm();
     props.updateList();
   } else {
-    console.log('Invalid data');
+    console.log('Invalid form data');
   }
 }
 

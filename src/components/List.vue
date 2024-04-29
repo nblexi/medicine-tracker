@@ -29,13 +29,10 @@ let frequency_label = (freq) => {
 }
 
 let remove = (name) => {
-	console.log('remove')
-	console.log(name)
   let index = medList.findIndex(item => item.name === name);
   if (index !== -1) {
   	medList.splice(index, 1);
 		$medicine_list.set(medList);
-		console.log($medicine_list.value)
 		props.updateList();
   }
 }

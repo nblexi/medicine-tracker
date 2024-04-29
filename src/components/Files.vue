@@ -79,8 +79,6 @@ let updateAll = () => {
      rows.slice(1).map((row) => {
         const values = row.split(',');
         if(values != '') {
-          console.log(values);
-
           let payload = {
             name: values[0],
             frequency: values[1],
@@ -100,7 +98,6 @@ let updateAll = () => {
           medList.push(payload);
         }
       })
-      console.log(medList)
       $medicine_list.set(medList);
     };
     reader.readAsText(file);

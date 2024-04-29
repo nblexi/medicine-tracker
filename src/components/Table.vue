@@ -47,7 +47,6 @@ const props = defineProps({
 let prettyPrintDate = (date) => {
   if(date === '') return '';
 
-  console.log(date);
   let month = date.split('/')[0];
   let day = date.split('/')[1];
   let year = date.split('/')[2];

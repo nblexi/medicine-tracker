@@ -40,7 +40,6 @@ const start_date = ref($start_date.value);
 const on_days = ref($days_on.value);
 
 let picker_format = (value) => {
-  console.log(value)
   let month = value.split('/')[0];
   let day = value.split('/')[1];
   let year = value.split('/')[2];
